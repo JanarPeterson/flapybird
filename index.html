@@ -41,7 +41,7 @@
 			},
 
 			bird = {
-				x: 80,
+				x: 60,
 				y: 100,
 				frame: 0,
 				velocity: 0,
@@ -55,7 +55,14 @@
 				},
 
 				update: function(){
+						var n = currentstate === states.Splash ? 10 : 5;
+						this.frame += frames % n === 0 ? 1 : 0;
+						this.frame %= this.animation.length;
 
+						if(currentstate === states.Splash){
+							this.y = height - 280 + 5*Math.cos(frames/10);
+							this.rotation = 0;
+						}
 				},
 				draw: function(ctx){
 						ctx.save();
@@ -92,6 +99,8 @@
 				canvas.height = height;
 				ctx = canvas.getContext("2d");
 
+				currentstate = states.Splash;
+
 				document.body.appendChild(canvas);
 
 				var img = new Image();
@@ -115,6 +124,9 @@
 			function update(){
 					frames++;
 					fgpos = (fgpos - 2) % 14;
+
+					bird.update();
+					pipes.update();
 			}
 
 			function render(){
@@ -124,9 +136,16 @@
 					s_bg.draw(ctx, s_bg.width, height - s_bg.height);
 
 					bird.draw(ctx);
+					pipes.draw(ctx);
 
 					s_fg.draw(ctx,fgpos, height - s_fg.height);
 					s_fg.draw(ctx, fgpos+s_fg.width, height - s_fg.height);
+
+					var width2 = width/2;
+					if(currentstate === states.Splash){
+						s_splash.draw(ctx, width2 - s_splash.width/2, height -300);
+						s_text.GetReady.draw(ctx, width2 - s_text.GetReady.width/2, height - 380);
+					}
 			}
 
 			main();
